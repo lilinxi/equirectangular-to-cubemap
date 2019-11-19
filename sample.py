@@ -7,7 +7,7 @@ import eq2cm
 if __name__ == '__main__':
     args = sys.argv
     img_path = args[1]
-    out_dir = args[2]
+    out_dir  = args[2]
     eqimg = cv2.imread(img_path)
 
     for i in range(-4, 4):

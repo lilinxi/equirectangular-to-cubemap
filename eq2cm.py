@@ -9,10 +9,11 @@ def gen_xyz(fov, u, v, out_h, out_w):
     y_rng = np.linspace(-np.tan(fov / 2), np.tan(fov / 2), num=out_h, dtype=np.float32)
 
     out[:, :, :2] = np.stack(np.meshgrid(x_rng, -y_rng), -1)
-    Rx = np.array([[1, 0, 0], [0, np.cos(-v), -np.sin(-v)], [0, np.sin(-v), np.cos(-v)]])
-    Ry = np.array([[np.cos(-u), 0, np.sin(-u)], [0, 1, 0], [-np.sin(-u), 0, np.cos(-u)]])
+    Rx = np.array([[1, 0, 0], [0, np.cos(v), -np.sin(v)], [0, np.sin(v), np.cos(v)]])
+    Ry = np.array([[np.cos(u), 0, np.sin(u)], [0, 1, 0], [-np.sin(u), 0, np.cos(u)]])
 
-    return out.dot(Rx).dot(Ry)
+    R = np.dot(Ry, Rx)
+    return out.dot(R.T)
 
 def xyz_to_uv(xyz):
     x, y, z = np.split(xyz, 3, axis=-1)
@@ -29,7 +30,7 @@ def uv_to_XY(uv, eq_h, eq_w):
 
 def eq_to_pers(eqimg, fov, u, v, out_h, out_w):
     xyz = gen_xyz(fov, u, v, out_h, out_w)
-    uv = xyz_to_uv(xyz)
+    uv  = xyz_to_uv(xyz)
 
     eq_h, eq_w = eqimg.shape[:2]
     XY = uv_to_XY(uv, eq_h, eq_w)
